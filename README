@@ -1,0 +1,86 @@
+0. LICENSE AND DISCLAIMER
+------------------------
+/**
+ ** Copyright (c) 2019 Saulo Jorge Beltrao de Queiroz
+ ** Contact: Saulo Queiroz <ssaulojorge@gmail.com> <sauloqueiroz@utfpr.edu.br> <saulo@dei.uc.pt>
+ ** This program is free software; you can redistribute it and/or modify
+ ** it under the terms of the GNU General Public License as published by
+ ** the Free Software Foundation; either version 2 of the License, or
+ ** (at your option) any later version.
+ ** 
+ ** This program is distributed in the hope that it will be useful,
+ ** but WITHOUT ANY WARRANTY; without even the implied warranty of
+ ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ ** GNU General Public License for more details.
+ ** 
+ ** You should have received a copy of the GNU General Public License
+ ** along with this program; if not, write to the Free Software 
+ ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ **/
+
+1.  PRESENTATION
+----------------
+
+This library implements the optimal mapper of OFDM with Index Modulation (OFDM-IM). By optimal we mean the mapper can achieve, in practice, the maximal theoretical spectral efficiency (SE) of OFDM-IM under the same asymptotic constraints of the classic OFDM mapper. A requisite for SE maximization is deactivating the subblock partitioning in the symbol (i.e. setting the number g of subblocks to =1) and setting the number of activa subcarriers to half of the available subcarriers.
+
+Our library implements all steps to map (decimal) data into frequency-domain complex baseband samples at the transmitter. Similarly, provided are steps to demap a frequency-domain complex baseband symbol into (decimal) data. Therefore, the OFDM-IM DSP blocks Index Selector (IxS), the M-ary mapping (for active subcarriers) and the Symbol Creation blocks are supported. The IxS block is implemented as callback to enable flexible inclusion of novel ranking/unranking algorithms.
+
+2.  AUTHORS
+----------------
+This software was developed by Saulo Queiroz during this PhD under supervision of profs. Edmundo Monteiro and Joao P. Vilela.
+
+
+3. FUNCTIONALITIES OF INITIAL VERSION
+-------------------------------------
+* Suported index selector (IxS) algorithms: 
+   -> Combinadic unranking/ranking (referred to by the original OFDM-IM setup)
+   -> Linear-time combinadic unranking/ranking 
+
+* Supported constellations for active subcarriers: 
+   -> IEEE 802.11 BPSK and QPSK
+
+4. INSTALLATION
+-----------------------------------------
+Performing command "make" should build libraries and examples in lib/ and examples/, respectivelly.
+Source codes are in src/.
+Basic C++ compiler is required.
+
+5. HOW TO ADD YOUR OWN INDEX SELECTOR ALGORITHM
+-----------------------------------------------
+We provide users with generic methods to facilitate the implementation of nove novel index selector algorithms. They are listed below. The prototype of the methods are in the class UnRankingAlgorithmsCallBack in the file include/ixs.h whicg are implemented in the library src/ixs.c.
+
+a) void thirdPartUnranking(TypeData X, int N, int k, TypeIndex* answer)
+Replace the content of this method to your own implementation of unranking (index selector at the OFDM IM transmitter).
+This method takes X in the range 0 to C(N,k)-1 and calculates the elements of the array answer[0..k-1] such that:
+     X = C(answer[0], 1) + C(answer[1], 2) + C(answer[2], 3) + ... + C(answer[k-1], k).
+Data types are defined in include/ixs.h.
+
+b) TypeData thirdPartRanking(int N, int k, TypeIndex* indexesArray); 
+Replace the content of this method to your own implementation of unranking (index selector at the OFDM IM receiver).
+This method does the inverse of unranking: i.e. calculates the value of the integer X in [0, C(N,k)-1] given the array of indexes indexesArray.
+
+For more details abount unranking/ranking and the Combinatorial Number System, please refer to
+https://en.wikipedia.org/wiki/Combinatorial_number_system
+
+After steps above, you can instantiate an IMMapper and set it to work with your algorithms as follows:
+include <immapper.h>
+...
+IMMapper myMapper(64, 32); //64-subcarrier mapper, k = 32. BPSK by default.
+// declarating unrank and rank callback (pointer) variables 
+void (UnRankingAlgorithmsCallBack::*unrank)(TypeData, int, int, TypeIndex*);
+TypeData (UnRankingAlgorithmsCallBack::*rank) (int N, int k, TypeIndex* indexesArray);
+
+unrank = &UnRankingAlgorithmsCallBack::thirdPartUnranking;
+rank = &UnRankingAlgorithmsCallBack::thirdPartRanking;
+
+//setting them to your own implementation
+myMapper.setIxSAlgorithm(unrank, rank);
+
+6. SUGGESTED TODO FROM THE INITIAL VERSION
+-----------------------------------------
+* Expand to higher order QAM constellations M>4.
+* Support for sub-optimal spectral efficiency setups, g>1, k!=N/2.
+* Support dual-mode OFDM-IM mapp (remark: this is just a matter of add novel constellation diagrams in the MLUT class)
+* Support multiple-mode OFDM-IM map
+* Support for the remainder DSP steps: FFT, Detection.
+* Support for noise and channel simulation to compare different OFDM-IM algorithms

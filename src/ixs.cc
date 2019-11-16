@@ -107,7 +107,7 @@ TypeData UnRankingAlgorithmsCallBack::binomialCoefficient(unsigned int n, unsign
 {  
   assert(n >= 0 && k >= 0);
   if (k > n) return 0;
-  if (k == n || k == 0) return 1;
+  if (k == n) return 1;
 
   /*
    * C(n, k)  = C(n, n-k)

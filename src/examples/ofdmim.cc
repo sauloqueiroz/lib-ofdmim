@@ -43,6 +43,9 @@ int main(int argc, char *argv[])
   N = stoi(argv[1]);
   k = stoi(argv[2]);
   M = stoi(argv[3]);
+  cout << "N=" << N<<endl;
+  cout << "k=" << k<<endl;
+  cout << "M=" << M<<endl;
   ixsAlgorithm = stoi(argv[4]);
   IMMapper myMapper(N, M);
   myMapper.setk(k);
@@ -61,15 +64,20 @@ int main(int argc, char *argv[])
 
   myMapper.setIxSAlgorithm(unrank, rank);
   int i;
-  TypeData dataInterval = myMapper.getNumberOfIMWaveforms();
+  mt19937_64 randomStream;
+  // good seeds
+  randomStream.seed(1973272912);
+
+  TypeData dataInterval = myMapper.getNumberOfIMWaveforms(); //same for the 3
+  std::uniform_int_distribution<TypeData> distribution(0, dataInterval - 1);
   for (i=0; i <  dataInterval; i++)   
   {
-      TypeData indexData = rand() % dataInterval;
+      TypeData indexData = distribution(randomStream); 
       myMapper.loadP1(indexData); //just set p1 to i
       myMapper.loadP2(); //load data array p2 with random values     
       myMapper.map(); //ixs + mlut + symbol creation
 
-      cout << endl<< "Chosen Indexes for P1 data="<< i << endl;
+      cout << endl<< "Chosen Indexes for P1 data="<< indexData << endl;
       myMapper.printArrayI(); //print indexes modulated by p1
       cout << endl<< "k-data of p2 array" << endl;
       myMapper.printP2();

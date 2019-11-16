@@ -52,8 +52,8 @@ int main(int argc, char *argv[])
 {
   //assigns highest priority to process. Requires root privileges.
   setpriority(PRIO_PROCESS, 0, -20);
-
-  int i, j, ik;
+ 
+  int i, j, ik; 
   int N, k, M, ixsAlgorithm;
   if (argc < 3)
   { 

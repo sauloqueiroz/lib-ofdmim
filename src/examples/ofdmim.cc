@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
   std::uniform_int_distribution<TypeData> distribution(0, dataInterval - 1);
   for (i=0; i <  dataInterval; i++)   
   {
-      TypeData indexData = distribution(randomStream); 
+      TypeData indexData = i;//distribution(randomStream); 
       myMapper.loadP1(indexData); //just set p1 to i
       myMapper.loadP2(); //load data array p2 with random values     
       myMapper.map(); //ixs + mlut + symbol creation

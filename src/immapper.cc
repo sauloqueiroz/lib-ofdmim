@@ -119,10 +119,20 @@ void IMMapper::createOFDMIMSymbol()
   assert(ofdmIMSymbol);
   assert(arrayI);
   assert(arrayS);
-  int i;
-
-  for (i=0; i<k; i++)
-    ofdmIMSymbol[arrayI[i]] = arrayS[i];
+  int i, ik = 0;
+  //iterates across all symbol indexes i
+  //the ones in arrayI indicates active subcarriers
+  for (i=0; i<N; i++)
+  {
+    if (i == arrayI[ik])
+    {
+       ofdmIMSymbol[i] = arrayS[ik];
+       ik++;
+    }
+    else
+      ofdmIMSymbol[i] = complex<double>(0.0,0.0); //subcarriers are deactivate unless IxS changes that!
+  }
+  assert(ik == k); 
 }
 
 void IMMapper::loadP1(TypeData data)
@@ -299,11 +309,10 @@ void IMMapper::printSymbol()
 {
   assert(ofdmIMSymbol);
   int i;
-  for (i=0; i<N; i++)
-//    cout << i << " " << ofdmIMSymbol[i] << endl;
+  for (i=0; i<getN(); i++)
     {
-        printf("Subcarrier %d =", i);
-        cout <<real(ofdmIMSymbol[i]) << std::showpos << imag(ofdmIMSymbol[i]) << "i"<<endl;
+        cout << "Subcarrier " << i << ":\t";
+        cout <<real(ofdmIMSymbol[i]) << std::showpos << imag(ofdmIMSymbol[i]) << "j"<<endl;
         cout << std::noshowpos;//deactivate signal print
     }
 }

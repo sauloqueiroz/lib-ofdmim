@@ -105,13 +105,36 @@ TypeData UnRankingAlgorithmsCallBack::optimalRanking(int N, int k, TypeIndex* in
 
 TypeData UnRankingAlgorithmsCallBack::binomialCoefficient(unsigned int n, unsigned int k)
 {  
-  int i;
+  assert(n >= 0 && k >= 0);
   if (k > n) return 0;
-  if (k == n) return 1;
-  double prod = 1.0;
-  for(i=1; i<=k; i++)
-    prod= prod * ((double)n-i+1)/i;
-  return (unsigned long int)prod;
+  if (k == n || k == 0) return 1;
+
+  /*
+   * C(n, k)  = C(n, n-k)
+   * Since this algorithm is O(k) we set k to min(k, n - k).
+   * The multiplicative slightly changes the combinatorial multiplicative 
+   * formula  (N-i+1) / i optimized code adapted from:
+   * https://www.developertyrone.com/blog/generating-the-mth-lexicographical-element-of-a-mathematical-combination/
+   */
+  TypeData i, ans, iMax, delta;
+   if (k < n-k) // ex: Choose(100,3)
+   {
+      delta = n - k;
+      iMax = k;
+   }
+   else         // ex: Choose(100,97)
+   {
+     delta = k;
+     iMax = n-k;
+   }
+
+   ans = delta + 1;
+   for (i = 2; i <= iMax; ++i)
+    {
+       //checked { ans = (ans * (delta + i)) / i; }
+       ans = (ans * (delta + i)) / i; 
+    }
+    return ans;
 }
 
 //replace the content of this method to your own implementation of unranking (index selector at transmitter)

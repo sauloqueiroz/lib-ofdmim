@@ -18,18 +18,15 @@
 
 #include "immapper.h" 
 //========================================================> OFDM IM CLASS
-//Default constructor
-IMMapper::IMMapper(int _N): g(1)
+//Default constructor: near IEEE 802.11 symbol
+IMMapper::IMMapper(): g(1), N(64), k(32), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
 {
-  N = _N;
-  k = N / 2;
   numberOfIMWaveforms = binomialCoefficient(N, k);
-  ofdmIMSymbol = (complex<double> *) malloc(N * sizeof(complex<double>));
-  assert(ofdmIMSymbol);
-  TypeIndex j;
-  for(j=0; j<N; j++)
-    ofdmIMSymbol[j] = complex<double>(0.0,0.0); //subcarriers are deactivate unless IxS changes that!
-
+  mlut = new MLUT(2);
+  allocateOFDMIMSymbol(N);
+  allocateKSizeArrays(k);
+  //initializing p1 and array I of indexes
+  p1 = 0;
   /* the following instructions ensure that the command 
    * indexSelector->*unrank(X, N, k, arrayI) will perform
    * unrank of X in[0,C(N,k)-1] and store results in arrayI
@@ -38,88 +35,17 @@ IMMapper::IMMapper(int _N): g(1)
   indexSelector = new UnRankingAlgorithmsCallBack;
   unrank = &UnRankingAlgorithmsCallBack::optimalUnranking;
   rank = &UnRankingAlgorithmsCallBack::optimalRanking;
-
-  mlut = new MLUT(2);
-
-  //initializing p1 and array I of indexes
-  p1 = 0;
-  arrayI = (TypeIndex *)malloc(k * sizeof(TypeIndex));
-  assert(arrayI);
-  TypeIndex i;
-  for(i=0; i<k; i++)
-    arrayI[i] = i;  //default value
-
-  //initializing k-size array of data for the active subcarriers. Each is an integer from 0 to M-1
-  p2 = (TypeData *)malloc(k * sizeof(TypeData));
-  assert(p2);
-  for(i=0; i<k; i++)
-    p2[i] = 0;
-
-  //initializing array s of M-ary complex baseband samples for the p2 data
-  arrayS = (complex<double> *)malloc(k * sizeof(complex<double>));
-  assert(arrayS);
-  for(i=0; i<k; i++)
-    arrayS[i] = mlut->map(p2[i]);
 }
 
-//Constructor allowing choice of unranking/ranking algorithms
-// _unrank must correspond to &UnRankingAlgorithmsCallBack::X such that X is implemented in UnRankingAlgorithmsCallBack
-IMMapper::IMMapper(int _N, 
-                   void (UnRankingAlgorithmsCallBack::*_unrank)(TypeData, int, int, TypeIndex*), 
-                   TypeData (UnRankingAlgorithmsCallBack::*_rank)(int, int, TypeIndex*)): g(1)
+IMMapper::IMMapper(int _N): g(1), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
 {
   N = _N;
   k = N / 2;
-  numberOfIMWaveforms = binomialCoefficient(N, k);
-  ofdmIMSymbol = (complex<double> *) malloc(N * sizeof(complex<double>));
-  assert(ofdmIMSymbol);
-  TypeIndex j;
-  for(j=0; j<N; j++)
-    ofdmIMSymbol[j] = complex<double>(0.0,0.0); //subcarriers are deactivate unless IxS changes that!
-
-  /* the following instructions ensure that the command 
-   * indexSelector->*unrank(X, N, k, arrayI) will perform
-   * unrank of X in[0,C(N,k)-1] and store results in arrayI
-   * Similar to ranking.
-   */
-  indexSelector = new UnRankingAlgorithmsCallBack;
-  unrank = _unrank;
-  rank = _rank;
-
-  mlut = new MLUT(2);
-
-  //initializing p1 and array I of indexes
   p1 = 0;
-  arrayI = (TypeIndex *)malloc(k * sizeof(TypeIndex));
-  assert(arrayI);
-  TypeIndex i;
-  for(i=0; i<k; i++)
-    arrayI[i] = i;  //default value
-
-  //initializing k-size array of data for the active subcarriers. Each is an integer from 0 to M-1
-  p2 = (TypeData *)malloc(k * sizeof(TypeData));
-  assert(p2);
-  for(i=0; i<k; i++)
-    p2[i] = 0;
-
-  //initializing array s of M-ary complex baseband samples for the p2 data
-  arrayS = (complex<double> *)malloc(k * sizeof(complex<double>));
-  assert(arrayS);
-  for(i=0; i<k; i++)
-    arrayS[i] = mlut->map(p2[i]);
-}
-
-IMMapper::IMMapper(int _N, int _M): g(1)
-{
-  N = _N;
-  k = N / 2;
   numberOfIMWaveforms = binomialCoefficient(N, k);
-  ofdmIMSymbol = (complex<double> *) malloc(N * sizeof(complex<double>));
-  assert(ofdmIMSymbol);
-  TypeIndex j;
-  for(j=0; j<N; j++)
-    ofdmIMSymbol[j] = complex<double>(0.0,0.0); //subcarriers are deactivate unless IxS changes that!
-
+  mlut = new MLUT(2);
+  allocateOFDMIMSymbol(N);
+  allocateKSizeArrays(k);
   /* the following instructions ensure that the command 
    * indexSelector->*unrank(X, N, k, arrayI) will perform
    * unrank of X in[0,C(N,k)-1] and store results in arrayI
@@ -128,81 +54,64 @@ IMMapper::IMMapper(int _N, int _M): g(1)
   indexSelector = new UnRankingAlgorithmsCallBack;
   unrank = &UnRankingAlgorithmsCallBack::optimalUnranking;
   rank = &UnRankingAlgorithmsCallBack::optimalRanking;
-
-
-  mlut = new MLUT(_M);
-
-  //initializing p1 and array I of indexes
-  p1 = 0;
-  arrayI = (TypeIndex *)malloc(k * sizeof(TypeIndex));
-  assert(arrayI);
-
-  TypeIndex i;
-  for(i=0; i<k; i++)
-    arrayI[i] = i;  //default value
-
-  //initializing k-size array of data for the active subcarriers. Each is an integer from 0 to M-1
-  p2 = (TypeData *)malloc(k * sizeof(TypeData));
-  assert(p2);
-  for(i=0; i<k; i++)
-    p2[i] = 0;
-
-  //initializing array s of M-ary complex baseband samples for the p2 data
-  arrayS = (complex<double> *)malloc(k * sizeof(complex<double>));
-  assert(arrayS);
-  for(i=0; i<k; i++)
-    arrayS[i] = mlut->map(p2[i]);
 }
 
-// _unrank must correspond to &UnRankingAlgorithmsCallBack::X such that X is implemented in UnRankingAlgorithmsCallBack
-IMMapper::IMMapper(int _g, int _k, int _N, int _M, 
-                   void (UnRankingAlgorithmsCallBack::*_unrank)(TypeData, int, int, TypeIndex*), 
-                   TypeData (UnRankingAlgorithmsCallBack::*_rank)(int, int, TypeIndex*))
+IMMapper::IMMapper(int _N, int _M): g(1), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
 {
-  g = _g;
   N = _N;
-  k = _k;
-  numberOfIMWaveforms = binomialCoefficient(_N, _k);
-  /* the, following instructions ensure that the command 
-   * indexSelector.*unrank(X, N, k, arrayI) will perform
+  k = N / 2;
+  p1 = 0;
+  numberOfIMWaveforms = binomialCoefficient(N, k);
+  mlut = new MLUT(_M);
+  allocateOFDMIMSymbol(N);
+  allocateKSizeArrays(k);
+  /* the following instructions ensure that the command 
+   * indexSelector->*unrank(X, N, k, arrayI) will perform
    * unrank of X in[0,C(N,k)-1] and store results in arrayI
    * Similar to ranking.
    */
   indexSelector = new UnRankingAlgorithmsCallBack;
-  unrank = _unrank; 
-  rank = _rank;
-
-  mlut = new MLUT(_M);
-
-  //initializing p1 and array I of indexes
-  p1 = 0;
-  arrayI = (TypeIndex *)malloc(k * sizeof(TypeIndex));
-  assert(arrayI);
-  int i;
-  for(i=0; i<k; i++)
-    arrayI[i] = i;  //default value
-
-  //initializing k-size array of data for the active subcarriers. Each is an integer from 0 to M-1
-  p2 = (TypeData *)malloc(k * sizeof(TypeData));
-  assert(p2);
-  for(i=0; i<k; i++)
-    p2[i] = 0;
-
-  //initializing array s of M-ary complex baseband samples for the p2 data
-  arrayS = (complex<double> *)malloc(k * sizeof(complex<double>));
-  assert(arrayS);
-  for(i=0; i<k; i++)
-    arrayS[i] = mlut->map(p2[i]);
-
+  unrank = &UnRankingAlgorithmsCallBack::optimalUnranking;
+  rank = &UnRankingAlgorithmsCallBack::optimalRanking;
 }
 
 IMMapper::~IMMapper()
 {
-  free(arrayI);
-  free(p2);
-  //free(arrayS);
-  //free(indexSelector);
-  //free(ofdmIMSymbol);
+}
+
+void IMMapper::allocateOFDMIMSymbol(int _N)
+{
+  N = _N;
+  ofdmIMSymbol = (complex<double> *) realloc(ofdmIMSymbol, N * sizeof(complex<double>));
+  assert(ofdmIMSymbol);
+  TypeIndex j;
+  for(j=0; j<N; j++)
+    ofdmIMSymbol[j] = complex<double>(0.0,0.0); //subcarriers are deactivate unless IxS changes that!
+}
+
+void IMMapper::allocateKSizeArrays(int _k)
+{
+  k = _k;
+  int i;
+  //allocating k-size array that stores indexes of active subcarriers
+  arrayI = (TypeIndex *) realloc(arrayI, k * sizeof(TypeIndex));
+  assert(arrayI);
+  TypeIndex j;
+  for(j=0; j<k; j++)
+    arrayI[j] = j;
+
+  //initializing k-size array of data for the active subcarriers. Each is an integer from 0 to M-1
+  p2 = (TypeData *)realloc(p2, k * sizeof(TypeData));
+  assert(p2);
+  for(i=0; i<k; i++)
+    p2[i] = 0;
+
+  //initializing array s of M-ary complex baseband samples for the p2 data
+  arrayS = (complex<double> *)realloc(arrayS, k * sizeof(complex<double>));
+  assert(arrayS);
+  for(i=0; i<k; i++)
+    arrayS[i] = complex<double> (0.0, 0.0);
+
 }
 
 void IMMapper::createOFDMIMSymbol()
@@ -317,11 +226,6 @@ int IMMapper::getk()
   return k;
 }
 
-void IMMapper::setk(int _k)
-{
-  k = _k;
-}
-
 int IMMapper::getN()
 {
   return N;
@@ -329,7 +233,12 @@ int IMMapper::getN()
 
 void IMMapper::setN(int _N)
 {
-  N = _N;
+  allocateOFDMIMSymbol(_N);
+}
+
+void IMMapper::setk(int _k)
+{
+  allocateKSizeArrays(_k);
 }
 
 void IMMapper::setM(int _M)
@@ -366,6 +275,15 @@ void IMMapper::loadP2()
   int M = mlut->getM();
   for (i=0; i<k; i++)
     p2[i] = rand() % M;
+}
+//user-defined data for modulation of active subcarriers
+void IMMapper::loadP2(TypeData *_p2)
+{
+  assert(p2 && _p2);
+  int i;
+  int M = mlut->getM();
+  for (i=0; i<k; i++)
+    p2[i] = _p2[i];
 }
 
 void IMMapper::mapP2()

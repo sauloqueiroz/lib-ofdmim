@@ -82,7 +82,6 @@ void MLUT::setM(int _M)
 
 MLUT::~MLUT()
 {
-  free(table);
 }
 
 /*

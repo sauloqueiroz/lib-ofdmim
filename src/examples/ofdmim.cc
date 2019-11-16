@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
     unrank = &UnRankingAlgorithmsCallBack::combinadicUnranking;
     rank = &UnRankingAlgorithmsCallBack::combinadicRanking;
   }
+  else
   {
     unrank = &UnRankingAlgorithmsCallBack::optimalUnranking;
     rank = &UnRankingAlgorithmsCallBack::optimalRanking;

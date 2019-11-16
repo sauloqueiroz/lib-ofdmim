@@ -26,6 +26,7 @@ all:
 	$(CC) -o ./lib/ixs.o -c ./src/ixs.cc $(CFLAGS)
 	$(CC) -o ./lib/immapper.o -c ./src/immapper.cc $(CFLAGS)
 	$(CC) -o ./examples/ofdmim ./src/examples/ofdmim.cc lib/immapper.o lib/ixs.o lib/mlut.o $(CFLAGS)
+	$(CC) -o ./examples/ieeeaccess ./src/examples/ieeeaccess.cc lib/immapper.o lib/ixs.o lib/mlut.o $(CFLAGS) -lboost_system -lboost_timer
 	
 clean:
 	rm ./lib/* ; rm ./examples/*

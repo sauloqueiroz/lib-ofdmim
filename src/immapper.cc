@@ -24,7 +24,6 @@ IMMapper::IMMapper(): g(1), N(64), k(32), ofdmIMSymbol(NULL), p2(NULL), arrayI(N
   //the product in the multiplicative formula of C(N,k) produces very large numbers
   //the largest one that fits a 64-bit variable is C(66,33)
   assert(N <= 66);
-  numberOfIMWaveforms = binomialCoefficient(N, k);
   mlut = new MLUT(2);
   allocateOFDMIMSymbol(N);
   allocateKSizeArrays(k);
@@ -96,6 +95,8 @@ void IMMapper::allocateOFDMIMSymbol(int _N)
   TypeIndex j;
   for(j=0; j<N; j++)
     ofdmIMSymbol[j] = complex<double>(0.0,0.0); //subcarriers are deactivate unless IxS changes that!
+  //after chaning N or k update number of waveforms
+  numberOfIMWaveforms = binomialCoefficient(N, getk());
 }
 
 void IMMapper::allocateKSizeArrays(int _k)
@@ -121,6 +122,8 @@ void IMMapper::allocateKSizeArrays(int _k)
   for(i=0; i<k; i++)
     arrayS[i] = complex<double> (0.0, 0.0);
 
+  //after chaning N or k update number of waveforms
+  numberOfIMWaveforms = binomialCoefficient(getN(), k);
 }
 
 void IMMapper::createOFDMIMSymbol()

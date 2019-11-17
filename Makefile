@@ -18,7 +18,7 @@
 IDIR =./include
 LIBDIR =./lib 
 CC=g++
-CFLAGS=-I$(IDIR) -L$(LIBDIR)
+CFLAGS=-I$(IDIR) -L$(LIBDIR) -O2
 
 
 all:
@@ -29,4 +29,4 @@ all:
 	$(CC) -o ./examples/ieeeaccess ./src/examples/ieeeaccess.cc lib/immapper.o lib/ixs.o lib/mlut.o $(CFLAGS) -lboost_system -lboost_timer
 	
 clean:
-	rm ./lib/* ; rm ./examples/*
+	rm ./lib/* ; rm ./examples/ofdmim examples/ieeeaccess

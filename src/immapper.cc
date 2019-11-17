@@ -18,8 +18,8 @@
 
 #include "immapper.h" 
 //========================================================> OFDM IM CLASS
-//Default constructor: near IEEE 802.11 symbol
-IMMapper::IMMapper(): g(1), N(64), k(32), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
+//Default constructor:
+IMMapper::IMMapper(): g(1), N(1024), k(32), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
 {
   numberOfIMWaveforms = binomialCoefficient(N, k);
   mlut = new MLUT(2);
@@ -222,8 +222,31 @@ void IMMapper::demapP2()
 void IMMapper::mapP1()
 {
   assert(arrayI);
-  //unranking is a callback (pointer to method) whose value is defined by the IMMapper constructor
-  (indexSelector->*unrank) (getP1(), getN(), getk(), arrayI);
+  //the unranking algorithms starts from the largest bin. coef candidates to the lowest.
+  //then, if P1 is small, the inner loop takes longer to find the first bin. coeff.
+  //in this case, it is faster to find the combinadic dualCombP1 of the dual of P1 and, from it, to find
+  //the combinadic of P1 with the formula  combP1[k-1-i] = _N-1 - dualCombP1[i], i in 0..k-1
+  //see:https://www.developertyrone.com/blog/generating-the-mth-lexicographical-element-of-a-mathematical-combination/
+  int _N = getN();
+  int _k = getk();
+  TypeData dualP1 = binomialCoefficient(_N,_k) - 1 - getP1();
+ // if (getP1() >= dualP1)
+  //{
+     //unranking is a callback (pointer to method) whose value is defined by the IMMapper constructor
+     (indexSelector->*unrank) (getP1(), _N, _k, arrayI);
+  //}
+/*  else
+  {
+    TypeIndex dualCombP1[_k];//combinadic of the dual of P1
+    (indexSelector->*unrank) (dualP1, _N, _k, dualCombP1);
+     int i;//, ik = _k - 1;
+     for(i=0; i < _k; i++)
+     {
+        //arrayI[ik] = _N-1 - dualCombP1[i];
+        arrayI[k-1-i] = _N-1 - dualCombP1[i]; 
+        //ik--;
+     }
+  }*/
 }
 
 TypeData IMMapper::getP1()

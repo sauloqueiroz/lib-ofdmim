@@ -16,7 +16,6 @@
  ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  **/
 
-
 #include "immapper.h"
 #include <stdio.h>
 #include <random>
@@ -102,6 +101,10 @@ int main(int argc, char *argv[])
  
   cpu_timer temporizador;//contador. Tempo ja está contando desde construtor. Usar start.
   TypeData _dataForActiveSubcarriers[k];
+
+  // get the clock time before operation.
+  // note that this is a static function, and
+  // we don't actually create a clock object
   for (i=0; i<20000; i++)   
   {
     //we feed akaroa-2 with samples simulated from 3 independent PRNGs
@@ -116,6 +119,7 @@ int main(int argc, char *argv[])
 
       temporizador.start(); 
       myMappers[j].mapP1(); //ixs + mlut + symbol creation      
+      //myMappers[j].map(); //ixs + mlut + symbol creation      
       temporizador.stop(); 
       cout << printTime(temporizador) << "\n";
     }

@@ -24,7 +24,7 @@ do
      do
        while :
        do 
-        sudo taskset -c 2 sudo ./ieeeaccess-tx $i 2 $ALGORITHM > "amostras-$ALGORITHM-$i"
+        sudo taskset -c 2 sudo ./ieeeaccess-tx $i $ALGORITHM > "amostras-$ALGORITHM-$i"
         wait 
         ./providencia1par "amostras-$ALGORITHM-$i" > "resultado-$ALGORITHM-$i"
             #checa se arquivo previamente criado ta vazio
@@ -33,7 +33,7 @@ do
             if [ $? -eq  0 ];
             then            
                 sudo cat "resultado-$ALGORITHM-$i"; #joga akaroa's output na tela
-                sudo killall ieeeaccess;
+                #sudo killall ieeeaccess;
                 #sudo rm timesamples.txt
                 break;
                 #exit 0;
@@ -61,6 +61,8 @@ sudo rm se-gain.txt
 sudo rm sc.eps
 sudo rm runtime.eps
 prec=0.0000000001
+
+
 # generate latex table and file for gnuplot
 echo "0 0 0 0 0" >> scthroughput-adapted-vs-combinadic-data.txt
 for ((i=2; i<=$LARGESTN; i=i+2 ))
@@ -114,31 +116,42 @@ do
     deltaadapted=`echo $deltaadapted | xargs printf "%.*f\n" 3` # rounding to 3 digits
     tempocomb=`echo $tempocomb | xargs printf "%.*f\n" 2` # rounding to 2 digits
     deltacomb=`echo $deltacomb | xargs printf "%.*f\n" 3` # rounding to 3 digits
-    #scadapted=`echo $scadapted | xargs printf "%.*f\n" 2` # rounding to 2 digits
-    #sccomb=`echo $sccomb | xargs printf "%.*f\n" 2` # rounding to 2 digits
+    scadapted=`echo $scadapted | xargs printf "%.*f\n" 2` # rounding to 2 digits
+    sccomb=`echo $sccomb | xargs printf "%.*f\n" 2` # rounding to 2 digits
 
 
     ganho=`bc <<< "scale = 3; $bits / $i"`; # ganho da Efic. Espec. sobre OFDM BPSK
     ganho=`echo $ganho | xargs printf "%.*f\n" 2` # rounding to 2 digits
     echo $i #$ganho
     echo $i $ganho >> se-gain.txt
-    echo "\multirow{2}{*}{$i} & \multirow{2}{*}{$bits} & \multirow{2}{*}{$ganho} &LIxS &\textbf{$tempoadapted} & $deltaadapted & $nadapted & $transienteadapted \\\ \cline{4-8}" >> latex-table.txt
-    echo "& & & IxS & \textbf{$tempocomb} & $deltacomb & $ncomb & $transientecomb \\\ \hline\hline" >> latex-table.txt
+    echo "\multirow{2}{*}{$i} & \multirow{2}{*}{$bits} & \multirow{2}{*}{$ganho} &Adapted &\textbf{$tempoadapted} & $deltaadapted & \textbf{$scadapted}  & $nadapted \\\ \cline{4-8}" >> latex-table.txt
+    echo "& & & Original & \textbf{$tempocomb} & $deltacomb & \textbf{$sccomb} & $ncomb \\\ \hline\hline" >> latex-table.txt
+   # below lines prints transient information in latex table instead of sc throughput
+   # echo "\multirow{2}{*}{$i} & \multirow{2}{*}{$bits} & \multirow{2}{*}{$ganho} &Adapted &\textbf{$tempoadapted} & $deltaadapted & $nadapted & $transienteadapted \\\ \cline{4-8}" >> latex-table.txt
+    #echo "& & & Original & \textbf{$tempocomb} & $deltacomb & $ncomb & $transientecomb \\\ \hline\hline" >> latex-table.txt
    fi
 done
 sed -i 's/,/./g' latex-table.txt #replace , by . in file latex-table.txt
 sed -i 's/,/./g' se-gain.txt
 
-for j in {1..2..1} 
-do
-    sudo rm -rf "IxS-$j"
-    mkdir "IxS-$j"
-    mkdir "IxS-$j/amostras"
-    mkdir "IxS-$j/resultados"
-    sudo mv amostras-* "IxS-$j/amostras"
-    sudo mv resultado-* "IxS-$j/resultados"
-done
+
+    sudo rm -rf "IxS-1"
+    mkdir "IxS-1"
+    mkdir "IxS-1/amostras"
+    mkdir "IxS-1/resultados"
+    sudo mv amostras-1* "IxS-1/amostras"
+    sudo mv resultado-1* "IxS-1/resultados"
+
+    sudo rm -rf "IxS-2"
+    mkdir "IxS-2"
+    mkdir "IxS-2/amostras"
+    mkdir "IxS-2/resultados"
+    sudo mv amostras-2* "IxS-2/amostras"
+    sudo mv resultado-2* "IxS-2/resultados"
+
 gnuplot plot-runtime &> /dev/null # suppresses impression
 gnuplot plot-sc &> /dev/null # suppresses impression
 evince runtime.eps &
 evince sc.eps &
+
+# finishing latex table

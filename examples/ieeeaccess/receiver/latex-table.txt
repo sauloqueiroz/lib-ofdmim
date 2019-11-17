@@ -1,0 +1,66 @@
+\multirow{2}{*}{2} & \multirow{2}{*}{2} & \multirow{2}{*}{1.00} &Adapted &\textbf{0.05} & 0.001 & \textbf{38.10}  & 1662 \\ \cline{4-8}
+& & & Original & \textbf{0.05} & 0.002 & \textbf{41.84} & 3324 \\ \hline\hline
+\multirow{2}{*}{4} & \multirow{2}{*}{4} & \multirow{2}{*}{1.00} &Adapted &\textbf{0.07} & 0.002 & \textbf{59.97}  & 1824 \\ \cline{4-8}
+& & & Original & \textbf{0.06} & 0.001 & \textbf{66.45} & 1608 \\ \hline\hline
+\multirow{2}{*}{6} & \multirow{2}{*}{7} & \multirow{2}{*}{1.17} &Adapted &\textbf{0.08} & 0.001 & \textbf{85.57}  & 1668 \\ \cline{4-8}
+& & & Original & \textbf{0.07} & 0.001 & \textbf{96.42} & 1722 \\ \hline\hline
+\multirow{2}{*}{8} & \multirow{2}{*}{10} & \multirow{2}{*}{1.25} &Adapted &\textbf{0.10} & 0.002 & \textbf{98.62}  & 1878 \\ \cline{4-8}
+& & & Original & \textbf{0.10} & 0.001 & \textbf{100.00} & 1710 \\ \hline\hline
+\multirow{2}{*}{10} & \multirow{2}{*}{12} & \multirow{2}{*}{1.20} &Adapted &\textbf{0.13} & 0.001 & \textbf{93.60}  & 1674 \\ \cline{4-8}
+& & & Original & \textbf{0.14} & 0.002 & \textbf{86.71} & 1494 \\ \hline\hline
+\multirow{2}{*}{12} & \multirow{2}{*}{15} & \multirow{2}{*}{1.25} &Adapted &\textbf{0.16} & 0.001 & \textbf{94.40}  & 1572 \\ \cline{4-8}
+& & & Original & \textbf{0.18} & 0.002 & \textbf{82.28} & 1428 \\ \hline\hline
+\multirow{2}{*}{14} & \multirow{2}{*}{18} & \multirow{2}{*}{1.28} &Adapted &\textbf{0.18} & 0.001 & \textbf{101.07}  & 1506 \\ \cline{4-8}
+& & & Original & \textbf{0.23} & 0.002 & \textbf{78.95} & 1542 \\ \hline\hline
+\multirow{2}{*}{16} & \multirow{2}{*}{21} & \multirow{2}{*}{1.31} &Adapted &\textbf{0.21} & 0.001 & \textbf{102.19}  & 1626 \\ \cline{4-8}
+& & & Original & \textbf{0.28} & 0.003 & \textbf{75.27} & 1542 \\ \hline\hline
+\multirow{2}{*}{18} & \multirow{2}{*}{24} & \multirow{2}{*}{1.33} &Adapted &\textbf{0.22} & 0.002 & \textbf{108.99}  & 1848 \\ \cline{4-8}
+& & & Original & \textbf{0.34} & 0.010 & \textbf{70.80} & 1452 \\ \hline\hline
+\multirow{2}{*}{20} & \multirow{2}{*}{27} & \multirow{2}{*}{1.35} &Adapted &\textbf{0.24} & 0.003 & \textbf{111.75}  & 1560 \\ \cline{4-8}
+& & & Original & \textbf{0.40} & 0.005 & \textbf{68.20} & 1494 \\ \hline\hline
+\multirow{2}{*}{22} & \multirow{2}{*}{30} & \multirow{2}{*}{1.36} &Adapted &\textbf{0.26} & 0.008 & \textbf{115.38}  & 1650 \\ \cline{4-8}
+& & & Original & \textbf{0.47} & 0.003 & \textbf{64.02} & 1560 \\ \hline\hline
+\multirow{2}{*}{24} & \multirow{2}{*}{33} & \multirow{2}{*}{1.38} &Adapted &\textbf{0.29} & 0.001 & \textbf{115.59}  & 1548 \\ \cline{4-8}
+& & & Original & \textbf{0.55} & 0.007 & \textbf{59.49} & 1602 \\ \hline\hline
+\multirow{2}{*}{26} & \multirow{2}{*}{36} & \multirow{2}{*}{1.38} &Adapted &\textbf{0.30} & 0.002 & \textbf{119.72}  & 1548 \\ \cline{4-8}
+& & & Original & \textbf{0.64} & 0.004 & \textbf{56.30} & 1524 \\ \hline\hline
+\multirow{2}{*}{28} & \multirow{2}{*}{39} & \multirow{2}{*}{1.39} &Adapted &\textbf{0.33} & 0.002 & \textbf{119.34}  & 1536 \\ \cline{4-8}
+& & & Original & \textbf{0.75} & 0.004 & \textbf{52.26} & 1446 \\ \hline\hline
+\multirow{2}{*}{30} & \multirow{2}{*}{42} & \multirow{2}{*}{1.40} &Adapted &\textbf{0.35} & 0.001 & \textbf{119.28}  & 1554 \\ \cline{4-8}
+& & & Original & \textbf{0.84} & 0.006 & \textbf{49.73} & 1512 \\ \hline\hline
+\multirow{2}{*}{32} & \multirow{2}{*}{45} & \multirow{2}{*}{1.41} &Adapted &\textbf{0.37} & 0.002 & \textbf{122.35}  & 1584 \\ \cline{4-8}
+& & & Original & \textbf{0.97} & 0.009 & \textbf{46.62} & 1464 \\ \hline\hline
+\multirow{2}{*}{34} & \multirow{2}{*}{48} & \multirow{2}{*}{1.41} &Adapted &\textbf{0.39} & 0.018 & \textbf{122.17}  & 2349 \\ \cline{4-8}
+& & & Original & \textbf{1.08} & 0.015 & \textbf{44.33} & 1446 \\ \hline\hline
+\multirow{2}{*}{36} & \multirow{2}{*}{51} & \multirow{2}{*}{1.42} &Adapted &\textbf{0.40} & 0.002 & \textbf{126.30}  & 1608 \\ \cline{4-8}
+& & & Original & \textbf{1.22} & 0.019 & \textbf{41.82} & 1500 \\ \hline\hline
+\multirow{2}{*}{38} & \multirow{2}{*}{54} & \multirow{2}{*}{1.42} &Adapted &\textbf{0.42} & 0.001 & \textbf{129.00}  & 1488 \\ \cline{4-8}
+& & & Original & \textbf{1.40} & 0.027 & \textbf{38.58} & 1494 \\ \hline\hline
+\multirow{2}{*}{40} & \multirow{2}{*}{57} & \multirow{2}{*}{1.42} &Adapted &\textbf{0.44} & 0.009 & \textbf{129.19}  & 1524 \\ \cline{4-8}
+& & & Original & \textbf{1.52} & 0.017 & \textbf{37.49} & 1518 \\ \hline\hline
+\multirow{2}{*}{42} & \multirow{2}{*}{59} & \multirow{2}{*}{1.40} &Adapted &\textbf{0.46} & 0.001 & \textbf{127.02}  & 1506 \\ \cline{4-8}
+& & & Original & \textbf{1.69} & 0.019 & \textbf{34.85} & 1464 \\ \hline\hline
+\multirow{2}{*}{44} & \multirow{2}{*}{62} & \multirow{2}{*}{1.41} &Adapted &\textbf{0.49} & 0.002 & \textbf{127.62}  & 1518 \\ \cline{4-8}
+& & & Original & \textbf{1.86} & 0.017 & \textbf{33.36} & 1584 \\ \hline\hline
+\multirow{2}{*}{46} & \multirow{2}{*}{65} & \multirow{2}{*}{1.41} &Adapted &\textbf{0.50} & 0.002 & \textbf{128.92}  & 1998 \\ \cline{4-8}
+& & & Original & \textbf{2.05} & 0.016 & \textbf{31.63} & 1518 \\ \hline\hline
+\multirow{2}{*}{48} & \multirow{2}{*}{68} & \multirow{2}{*}{1.42} &Adapted &\textbf{0.52} & 0.002 & \textbf{130.12}  & 1500 \\ \cline{4-8}
+& & & Original & \textbf{2.26} & 0.015 & \textbf{30.07} & 1482 \\ \hline\hline
+\multirow{2}{*}{50} & \multirow{2}{*}{71} & \multirow{2}{*}{1.42} &Adapted &\textbf{0.55} & 0.002 & \textbf{129.78}  & 1566 \\ \cline{4-8}
+& & & Original & \textbf{2.47} & 0.031 & \textbf{28.71} & 1512 \\ \hline\hline
+\multirow{2}{*}{52} & \multirow{2}{*}{74} & \multirow{2}{*}{1.42} &Adapted &\textbf{0.57} & 0.002 & \textbf{130.44}  & 1542 \\ \cline{4-8}
+& & & Original & \textbf{2.67} & 0.022 & \textbf{27.68} & 1530 \\ \hline\hline
+\multirow{2}{*}{54} & \multirow{2}{*}{77} & \multirow{2}{*}{1.42} &Adapted &\textbf{0.59} & 0.002 & \textbf{130.35}  & 1590 \\ \cline{4-8}
+& & & Original & \textbf{2.93} & 0.016 & \textbf{26.32} & 1524 \\ \hline\hline
+\multirow{2}{*}{56} & \multirow{2}{*}{80} & \multirow{2}{*}{1.43} &Adapted &\textbf{0.61} & 0.003 & \textbf{131.04}  & 1488 \\ \cline{4-8}
+& & & Original & \textbf{3.16} & 0.023 & \textbf{25.31} & 1542 \\ \hline\hline
+\multirow{2}{*}{58} & \multirow{2}{*}{83} & \multirow{2}{*}{1.43} &Adapted &\textbf{0.65} & 0.005 & \textbf{127.73}  & 1536 \\ \cline{4-8}
+& & & Original & \textbf{3.42} & 0.023 & \textbf{24.28} & 1530 \\ \hline\hline
+\multirow{2}{*}{60} & \multirow{2}{*}{86} & \multirow{2}{*}{1.43} &Adapted &\textbf{0.66} & 0.007 & \textbf{130.68}  & 1494 \\ \cline{4-8}
+& & & Original & \textbf{3.73} & 0.076 & \textbf{23.08} & 1464 \\ \hline\hline
+\multirow{2}{*}{62} & \multirow{2}{*}{89} & \multirow{2}{*}{1.43} &Adapted &\textbf{0.68} & 0.001 & \textbf{131.85}  & 1566 \\ \cline{4-8}
+& & & Original & \textbf{3.98} & 0.063 & \textbf{22.36} & 1554 \\ \hline\hline
+\multirow{2}{*}{64} & \multirow{2}{*}{92} & \multirow{2}{*}{1.44} &Adapted &\textbf{0.68} & 0.002 & \textbf{135.49}  & 1512 \\ \cline{4-8}
+& & & Original & \textbf{3.61} & 0.063 & \textbf{25.45} & 1542 \\ \hline\hline
+\multirow{2}{*}{66} & \multirow{2}{*}{95} & \multirow{2}{*}{1.44} &Adapted &\textbf{0.70} & 0.002 & \textbf{135.87}  & 1542 \\ \cline{4-8}
+& & & Original & \textbf{3.91} & 0.048 & \textbf{24.31} & 1542 \\ \hline\hline

@@ -101,7 +101,6 @@ int main(int argc, char *argv[])
         unrank = &UnRankingAlgorithmsCallBack::optimalUnranking;
         rank = &UnRankingAlgorithmsCallBack::optimalRanking;
       }
-
       myMappers[i].setIxSAlgorithm(unrank, rank);
   }
 
@@ -133,16 +132,16 @@ int main(int argc, char *argv[])
        myMappers[j].loadP1(indexData); //just set p1 to i
        for (ik=0; ik<k; ik++)
          _dataForActiveSubcarriers[ik] = distribution(randomStream[j]) % M;
+
        myMappers[j].loadP2(_dataForActiveSubcarriers); //load p2 data array with our random values
+       myMappers[j].map();
 
-       //temporizador.start(); 
+       //myMappers[j].demap(); // detection + ixs + mlut 
+       myMappers[j].oracleOFDMIMDetector(); //populates arrayI of indexes of active subcarriers in ofdmIMSymbol
        clock_gettime(CLOCK_MONOTONIC, &start); 
-
-       //myMappers[j].demapP1(); //ixs + mlut + symbol creation      
-       myMappers[j].demap(); //ixs + mlut + symbol creation      
+       myMappers[j].demapP1(); 
+       myMappers[j].demapP2(); 
        clock_gettime(CLOCK_MONOTONIC, &end); 
-       //clock_gettime(CLOCK_REALTIME, &end); 
-       //clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end); 
   
        // Calculating total time taken by the program. 
        double time_taken = 0.0; 

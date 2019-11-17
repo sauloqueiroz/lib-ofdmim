@@ -19,7 +19,7 @@
 #include "immapper.h" 
 //========================================================> OFDM IM CLASS
 //Default constructor:
-IMMapper::IMMapper(): g(1), N(64), k(32), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
+IMMapper::IMMapper(): g(1), N(66), k(32), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
 {
   //the product in the multiplicative formula of C(N,k) produces very large numbers
   //the largest one that fits a 64-bit variable is C(66,33)

@@ -36,16 +36,28 @@ using namespace std;
 #include <boost/timer/timer.hpp>
 using namespace boost::timer;
 
-
-double printTime(cpu_timer &temporizador) 
-{
-  cpu_times times;   //não é o contador. Apenas para ajudar na leitura do tempo medido
-  times = temporizador.elapsed(); //tempo decorrido
-  double clockWall = ((double)times.wall)/1000.0;//de nano para microseconds
-  //std::cout << std::fixed <<clockWall << '\n';  
-  times.clear();//Nao confundir com stop do temporizador. So limpa a variavel de impressao do tempo
-  return clockWall;
-}
+/*  Explanation from https://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html
+     int clock_gettime( clockid_t clock_id, struct  
+     timespec *tp ); The clock_gettime() function gets 
+     the current time of the clock specified by clock_id,  
+     and puts it into the buffer  pointed to by tp.tp  
+     parameter points to a structure containing  
+     atleast the following members:     
+     struct timespec { 
+                // This represents the number of whole seconds of elapsed time.
+               time_t   tv_sec;        
+               // This is the rest of the elapsed time (a fraction of a second), 
+               // represented as the number of nanoseconds. It is always less than one billion.
+               long     tv_nsec;       
+           }; 
+    clock id = CLOCK_REALTIME, CLOCK_PROCESS_CPUTIME_ID,  
+               CLOCK_MONOTONIC ...etc 
+    CLOCK_REALTIME : clock  that  measures real (i.e., wall-clock) time. 
+    CLOCK_PROCESS_CPUTIME_ID : High-resolution per-process timer  
+                               from the CPU. 
+    CLOCK_MONOTONIC : High resolution timer that is unaffected 
+                      by system date changes (e.g. NTP daemons). 
+*/
 
 
 int main(int argc, char *argv[])
@@ -68,21 +80,13 @@ int main(int argc, char *argv[])
   k = N/2;
   M = stoi(argv[2]);
   ixsAlgorithm = stoi(argv[3]);
-
-  IMMapper mapper1(N);
-  IMMapper mapper2(N);
-  IMMapper mapper3(N);
-  IMMapper *myMappers[3];// 3 random streams -> 3 mappers
-   myMappers[0] = &mapper1;
-   myMappers[1] = &mapper2;
-   myMappers[3] = &mapper3;
-
+  IMMapper myMappers[3];// 3 random streams -> 3 mappers
   //IMMapper myMapper(N, M);
   for (i=0; i<3; i++)
   {     
-      myMappers[i]->setN(N);
-      myMappers[i]->setk(k);
-      myMappers[i]->setM(M);
+      myMappers[i].setN(N);
+      myMappers[i].setk(k);
+      myMappers[i].setM(M);
       void (UnRankingAlgorithmsCallBack::*unrank)(TypeData, int, int, TypeIndex*) = 0;
       TypeData (UnRankingAlgorithmsCallBack::*rank) (int N, int k, TypeIndex* indexesArray);
       if (ixsAlgorithm == 1)
@@ -96,7 +100,7 @@ int main(int argc, char *argv[])
         rank = &UnRankingAlgorithmsCallBack::optimalRanking;
       }
 
-      myMappers[i]->setIxSAlgorithm(unrank, rank);
+      myMappers[i].setIxSAlgorithm(unrank, rank);
   }
 
   mt19937_64 randomStream[3];
@@ -105,7 +109,7 @@ int main(int argc, char *argv[])
   randomStream[1].seed(1822174485);
   randomStream[2].seed(1998078925);
 
-  TypeData dataInterval = myMappers[0]->getNumberOfIMWaveforms(); //same for the 3
+  TypeData dataInterval = myMappers[0].getNumberOfIMWaveforms(); //same for the 3
   std::uniform_int_distribution<TypeData> distribution(0, dataInterval - 1);
  
   cpu_timer temporizador;//contador. Tempo ja está contando desde construtor. Usar start.
@@ -127,28 +131,26 @@ int main(int argc, char *argv[])
     {
       //generates 64-bit random number from stream j (out of 3), from 0 to dataInterval - 1
       TypeData indexData = distribution(randomStream[j]); 
-      myMappers[j]->loadP1(indexData); //just set p1 to i
+      myMappers[j].loadP1(indexData); //just set p1 to i
       for (ik=0; ik<k; ik++)
         _dataForActiveSubcarriers[ik] = distribution(randomStream[j]) % M;
-      myMappers[j]->loadP2(_dataForActiveSubcarriers); //load p2 data array with our random values
+      myMappers[j].loadP2(_dataForActiveSubcarriers); //load p2 data array with our random values
 
       //temporizador.start(); 
       clock_gettime(CLOCK_MONOTONIC, &start); 
 
-      myMappers[j]->mapP1(); //ixs + mlut + symbol creation      
+      myMappers[j].mapP1(); //ixs + mlut + symbol creation      
       //myMappers[j].map(); //ixs + mlut + symbol creation      
-      //temporizador.stop(); 
-      //cout << printTime(temporizador) << "\n";
-    clock_gettime(CLOCK_MONOTONIC, &end); 
+       clock_gettime(CLOCK_MONOTONIC, &end); 
+       //clock_gettime(CLOCK_REALTIME, &end); 
+       //clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end); 
   
-    // Calculating total time taken by the program. 
-    double time_taken; 
-    time_taken = (end.tv_sec - start.tv_sec) * 1e9; 
-    time_taken = (time_taken + (end.tv_nsec - start.tv_nsec)) * 1e-9; //from nano to microsec
+       // Calculating total time taken by the program. 
+       double time_taken; 
+       time_taken = (end.tv_sec - start.tv_sec) * 1e6;//elapsed time from secs to microsecs
+       time_taken = time_taken  + (end.tv_nsec - start.tv_nsec) * 1e-3; //residual time from nano to microsec
   
-    cout << "Time taken by program is : " << fixed 
-         << time_taken << setprecision(9); 
-    cout << " sec" << endl; 
+       cout << fixed  << time_taken << setprecision(9) << endl; 
     }
    }
 

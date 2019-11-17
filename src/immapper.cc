@@ -114,14 +114,21 @@ void IMMapper::allocateKSizeArrays(int _k)
   p2 = (TypeData *)realloc(p2, k * sizeof(TypeData));
   assert(p2);
   for(i=0; i<k; i++)
-    p2[i] = 0;
+    p2[i] = 0; //= -1 bpsk
 
+  //reinitializing symbol
+  for(i=0; i<getN(); i++)
+  { 
+    ofdmIMSymbol[i] = complex<double> (0.0, 0.0);
+  }
   //initializing array s of M-ary complex baseband samples for the p2 data
   arrayS = (complex<double> *)realloc(arrayS, k * sizeof(complex<double>));
   assert(arrayS);
   for(i=0; i<k; i++)
-    arrayS[i] = complex<double> (0.0, 0.0);
-
+  {
+     arrayS[i] =  mlut->map(p2[i]);
+     ofdmIMSymbol[arrayI[i]] = arrayS[i];
+  }
   //after chaning N or k update number of waveforms
   numberOfIMWaveforms = binomialCoefficient(getN(), k);
 }
@@ -180,13 +187,13 @@ void IMMapper::demap()
 */
 void IMMapper::oracleOFDMIMDetector()
 {
-  assert(arrayI);//needed to store indexes
+  assert(arrayI && ofdmIMSymbol);//needed to store indexes
   int i;
   int ik = 0;
   for(i=0; i<getN(); i++)
   {
     if (ofdmIMSymbol[i] != complex<double>(0.0,0.0) )
-    { //current index is not deactivate
+    { //subcarrier of current index is active
        arrayI[ik] = i;
        ik++;
     }

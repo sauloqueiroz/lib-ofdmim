@@ -24,7 +24,7 @@ do
      do
        while :
        do 
-        sudo taskset -c 2 sudo ./ieeeaccess $i 2 $ALGORITHM > "amostras-$ALGORITHM-$i"
+        sudo taskset -c 2 sudo ./ieeeaccess-rx $i 2 $ALGORITHM > "amostras-$ALGORITHM-$i"
         wait 
         ./providencia1par "amostras-$ALGORITHM-$i" > "resultado-$ALGORITHM-$i"
             #checa se arquivo previamente criado ta vazio
@@ -101,7 +101,7 @@ do
     fi
     echo "Tempo em segundos $tempocombsegs $tempoadaptedsegs";
     echo "Bits=$bits"
-    sccomb=`bc <<< "scale = 10; $bits/$tempocombsegs"`; # Spectro COmputational throughput
+    sccomb=`bc <<< "scale = 10; $bits/$tempocombsegs"`; # Spectro COmputational throughput in bits per seconds
     sccomb=`bc <<< "scale = 10; $sccomb/1000000"`; # bps to mbps
     scadapted=`bc <<< "scale = 10; $bits/$tempoadaptedsegs"`; # Spectro COmputational throughput
     scadapted=`bc <<< "scale = 10; $scadapted/1000000"`; # bps to mbps

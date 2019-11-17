@@ -217,7 +217,7 @@ void IMMapper::demapP2()
   assert(arrayI && p2 && ofdmIMSymbol);
   int i;
   for (i=0; i<k; i++)
-    p2[k] = mlut->demap(ofdmIMSymbol[arrayI[i]]);
+    p2[i] = mlut->demap(ofdmIMSymbol[arrayI[i]]);
 }
 
 

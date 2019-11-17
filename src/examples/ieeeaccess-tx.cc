@@ -24,6 +24,9 @@
 #include <sys/time.h> 
 using namespace std;
 
+/*
+ * THIS PROGRAM REPORTS THE OFDMIM MAPPER RUNTIME IN MICROSECONDS
+*/
 
 //to set highest priority
 #include <sys/time.h>
@@ -67,21 +70,20 @@ int main(int argc, char *argv[])
  
   int i, j, ik; 
   int N, k, M, ixsAlgorithm;
-  if (argc < 3)
+  if (argc < 2)
   { 
      cout <<"Format: ";
-     cout <<"./ofdmim N k M IxSAlgoritm"<<endl;
+     cout <<"./ofdmim N IxSAlgoritm"<<endl;
      cout <<"\t N = number of subcarriers (k=N/2)"<<endl;
-     cout <<"\t M = constellation size for modulation of active subcarriers: 2 = BPSK, 4 = QPSK"<<endl;
      cout <<"\t IxSAlgorithm = Index selector algorithm: 1 = combinadic, 2 = adapted combinadic "<<endl;
      return -1;
   }
   N = stoi(argv[1]);
   k = N/2;
-  M = stoi(argv[2]);
-  ixsAlgorithm = stoi(argv[3]);
+  M = 2;
+  ixsAlgorithm = stoi(argv[2]);
+
   IMMapper myMappers[3];// 3 random streams -> 3 mappers
-  //IMMapper myMapper(N, M);
   for (i=0; i<3; i++)
   {     
       myMappers[i].setN(N);
@@ -115,44 +117,39 @@ int main(int argc, char *argv[])
   cpu_timer temporizador;//contador. Tempo ja está contando desde construtor. Usar start.
   TypeData _dataForActiveSubcarriers[k];
 
-  // get the clock time before operation.
-  // note that this is a static function, and
-  // we don't actually create a clock object
 
+  struct timespec start, end; 
+  // unsync the I/O of C and C++. 
+  ios_base::sync_with_stdio(false); 
 
-    struct timespec start, end; 
-        // unsync the I/O of C and C++. 
-        ios_base::sync_with_stdio(false); 
-
-  for (i=0; i<20000; i++)   
+  //20k suffices for our tests to reach default confidence of Akaroa-2 
+  for (i=0; i<20000; i++)  
   {
     //we feed akaroa-2 with samples simulated from 3 independent PRNGs
     for (j=0; j<3; j++)
     {
-      //generates 64-bit random number from stream j (out of 3), from 0 to dataInterval - 1
-      TypeData indexData = distribution(randomStream[j]); 
-      myMappers[j].loadP1(indexData); //just set p1 to i
-      for (ik=0; ik<k; ik++)
-        _dataForActiveSubcarriers[ik] = distribution(randomStream[j]) % M;
-      myMappers[j].loadP2(_dataForActiveSubcarriers); //load p2 data array with our random values
+       //generates 64-bit random number from stream j (out of 3), from 0 to dataInterval - 1
+       TypeData indexData = distribution(randomStream[j]); 
+       myMappers[j].loadP1(indexData); //just set p1 to i
+       for (ik=0; ik<k; ik++)
+         _dataForActiveSubcarriers[ik] = distribution(randomStream[j]) % M;
+       myMappers[j].loadP2(_dataForActiveSubcarriers); //load p2 data array with our random values
 
-      //temporizador.start(); 
-      clock_gettime(CLOCK_MONOTONIC, &start); 
+       //temporizador.start(); 
+       clock_gettime(CLOCK_MONOTONIC, &start); 
 
-      myMappers[j].mapP1(); //ixs + mlut + symbol creation      
-      //myMappers[j].map(); //ixs + mlut + symbol creation      
+       //myMappers[j].mapP1(); //ixs + mlut + symbol creation      
+       myMappers[j].map(); //ixs + mlut + symbol creation      
        clock_gettime(CLOCK_MONOTONIC, &end); 
        //clock_gettime(CLOCK_REALTIME, &end); 
        //clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end); 
   
        // Calculating total time taken by the program. 
-       double time_taken; 
+       double time_taken = 0.0; 
        time_taken = (end.tv_sec - start.tv_sec) * 1e6;//elapsed time from secs to microsecs
        time_taken = time_taken  + (end.tv_nsec - start.tv_nsec) * 1e-3; //residual time from nano to microsec
-  
        cout << fixed  << time_taken << setprecision(9) << endl; 
     }
    }
-
  return 0;
 }

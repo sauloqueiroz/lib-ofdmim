@@ -26,7 +26,8 @@ all:
 	$(CC) -o ./lib/ixs.o -c ./src/ixs.cc $(CFLAGS)
 	$(CC) -o ./lib/immapper.o -c ./src/immapper.cc $(CFLAGS)
 	$(CC) -o ./examples/ofdmim ./src/examples/ofdmim.cc lib/immapper.o lib/ixs.o lib/mlut.o $(CFLAGS)
-	$(CC) -o ./examples/ieeeaccess ./src/examples/ieeeaccess.cc lib/immapper.o lib/ixs.o lib/mlut.o $(CFLAGS) -lboost_system -lboost_timer
+	$(CC) -o ./examples/ieeeaccess/transmitter/ieeeaccess-tx ./src/examples/ieeeaccess-tx.cc lib/immapper.o lib/ixs.o lib/mlut.o $(CFLAGS) -lboost_system -lboost_timer
+	$(CC) -o ./examples/ieeeaccess/receiver/ieeeaccess-rx ./src/examples/ieeeaccess-rx.cc lib/immapper.o lib/ixs.o lib/mlut.o $(CFLAGS) -lboost_system -lboost_timer
 	
 clean:
-	rm ./lib/* ; rm ./examples/ofdmim examples/ieeeaccess
+	rm ./lib/* ; rm ./examples/ofdmim examples/ieeeaccess/transmitter/

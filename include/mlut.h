@@ -32,10 +32,11 @@ using namespace std;
     typedef unsigned int TypeIndex;
 #endif
 
+//name = constellation size
 enum CONSTELLATION
 {
-  BPSK = 1,
-  QPSK = 2
+  BPSK = 2,
+  QPSK = 4
 };
 
 // Standard M-ary mapper

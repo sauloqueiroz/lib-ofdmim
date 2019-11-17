@@ -60,12 +60,12 @@ void MLUT::setM(int _M)
   //IEEE 802.11 Constellation points
   switch ( M )
   {
-    case BPSK: //BPSK
+    case 2: //BPSK
         bpsk: //label for goto. Remove this when all M-QAM are supported.
         table[0] = complex<double>(-1.0, 0.0);
         table[1] = complex<double>(+1.0, 0.0);
     break;
-    case QPSK: //QPSK
+    case 4: //QPSK
         table[0] =  complex<double>(-1.0, -1.0);
         table[1] = complex<double>(-1.0, 1.0); 
         table[2] = complex<double>(1.0, -1.0);
@@ -104,7 +104,9 @@ TypeData MLUT::demap(complex<double> constellationPoint)
   for (i=0; i<M; i++)
     if (table[i] == constellationPoint)
       return i;
-  cout <<"Constellation point"<< constellationPoint <<" not found." << endl;
+   cout << "Constellation point "
+        << real(constellationPoint) << std::showpos << imag(constellationPoint) << "j"<<endl;
+   cout << std::noshowpos;//deactivate signal print
   assert(i < M);
 }
 

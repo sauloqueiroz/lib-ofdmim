@@ -19,8 +19,11 @@
 #include "immapper.h" 
 //========================================================> OFDM IM CLASS
 //Default constructor:
-IMMapper::IMMapper(): g(1), N(1024), k(32), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
+IMMapper::IMMapper(): g(1), N(64), k(32), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
 {
+  //the product in the multiplicative formula of C(N,k) produces very large numbers
+  //the largest one that fits a 64-bit variable is C(66,33)
+  assert(N <= 66);
   numberOfIMWaveforms = binomialCoefficient(N, k);
   mlut = new MLUT(2);
   allocateOFDMIMSymbol(N);
@@ -37,8 +40,11 @@ IMMapper::IMMapper(): g(1), N(1024), k(32), ofdmIMSymbol(NULL), p2(NULL), arrayI
   rank = &UnRankingAlgorithmsCallBack::optimalRanking;
 }
 
-IMMapper::IMMapper(int _N): g(1), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
+IMMapper::IMMapper(int _N): g(1), p2(NULL), arrayI(NULL), arrayS(NULL)
 {
+  //the product in the multiplicative formula of C(N,k) produces very large numbers
+  //the largest one that fits a 64-bit variable is C(66,33)
+  assert(N <= 66);
   N = _N;
   k = N / 2;
   p1 = 0;
@@ -58,6 +64,9 @@ IMMapper::IMMapper(int _N): g(1), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), ar
 
 IMMapper::IMMapper(int _N, int _M): g(1), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
 {
+  //the product in the multiplicative formula of C(N,k) produces very large numbers
+  //the largest one that fits a 64-bit variable is C(66,33)
+  assert(N <= 66);
   N = _N;
   k = N / 2;
   p1 = 0;
@@ -119,20 +128,15 @@ void IMMapper::createOFDMIMSymbol()
   assert(ofdmIMSymbol);
   assert(arrayI);
   assert(arrayS);
-  int i, ik = 0;
+  int i;
   //iterates across all symbol indexes i
   //the ones in arrayI indicates active subcarriers
   for (i=0; i<N; i++)
-  {
-    if (i == arrayI[ik])
-    {
-       ofdmIMSymbol[i] = arrayS[ik];
-       ik++;
-    }
-    else
-      ofdmIMSymbol[i] = complex<double>(0.0,0.0); //subcarriers are deactivate unless IxS changes that!
-  }
-  assert(ik == k); 
+    ofdmIMSymbol[i] = complex<double>(0.0,0.0); //subcarriers are deactivate unless IxS changes that!
+
+  for (i=0; i<k; i++)  
+    ofdmIMSymbol[arrayI[i]] = arrayS[i];  
+
 }
 
 void IMMapper::loadP1(TypeData data)

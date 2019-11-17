@@ -19,8 +19,9 @@
 #ifndef __IMMAPPER
 #define __IMMAPPER
 
-#include "mlut.h" 
-#include "ixs.h" 
+#include <mlut.h>
+#include <limits> //binomial coeffs. usually overflows variables 
+#include <ixs.h> 
 #include <complex>
 #include <iostream>
 #include <assert.h> 

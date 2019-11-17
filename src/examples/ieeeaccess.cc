@@ -15,12 +15,13 @@
  ** along with this program; if not, write to the Free Software 
  ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  **/
-
+#include <iomanip>      // std::setprecision
 #include "immapper.h"
 #include <stdio.h>
 #include <random>
 #include <iostream>
 #include <fstream>
+#include <sys/time.h> 
 using namespace std;
 
 
@@ -67,13 +68,21 @@ int main(int argc, char *argv[])
   k = N/2;
   M = stoi(argv[2]);
   ixsAlgorithm = stoi(argv[3]);
-  IMMapper myMappers[3];// 3 random streams -> 3 mappers
+
+  IMMapper mapper1(N);
+  IMMapper mapper2(N);
+  IMMapper mapper3(N);
+  IMMapper *myMappers[3];// 3 random streams -> 3 mappers
+   myMappers[0] = &mapper1;
+   myMappers[1] = &mapper2;
+   myMappers[3] = &mapper3;
+
   //IMMapper myMapper(N, M);
   for (i=0; i<3; i++)
   {     
-      myMappers[i].setN(N);
-      myMappers[i].setk(k);
-      myMappers[i].setM(M);
+      myMappers[i]->setN(N);
+      myMappers[i]->setk(k);
+      myMappers[i]->setM(M);
       void (UnRankingAlgorithmsCallBack::*unrank)(TypeData, int, int, TypeIndex*) = 0;
       TypeData (UnRankingAlgorithmsCallBack::*rank) (int N, int k, TypeIndex* indexesArray);
       if (ixsAlgorithm == 1)
@@ -87,7 +96,7 @@ int main(int argc, char *argv[])
         rank = &UnRankingAlgorithmsCallBack::optimalRanking;
       }
 
-      myMappers[i].setIxSAlgorithm(unrank, rank);
+      myMappers[i]->setIxSAlgorithm(unrank, rank);
   }
 
   mt19937_64 randomStream[3];
@@ -96,7 +105,7 @@ int main(int argc, char *argv[])
   randomStream[1].seed(1822174485);
   randomStream[2].seed(1998078925);
 
-  TypeData dataInterval = myMappers[0].getNumberOfIMWaveforms(); //same for the 3
+  TypeData dataInterval = myMappers[0]->getNumberOfIMWaveforms(); //same for the 3
   std::uniform_int_distribution<TypeData> distribution(0, dataInterval - 1);
  
   cpu_timer temporizador;//contador. Tempo ja está contando desde construtor. Usar start.
@@ -105,6 +114,12 @@ int main(int argc, char *argv[])
   // get the clock time before operation.
   // note that this is a static function, and
   // we don't actually create a clock object
+
+
+    struct timespec start, end; 
+        // unsync the I/O of C and C++. 
+        ios_base::sync_with_stdio(false); 
+
   for (i=0; i<20000; i++)   
   {
     //we feed akaroa-2 with samples simulated from 3 independent PRNGs
@@ -112,16 +127,28 @@ int main(int argc, char *argv[])
     {
       //generates 64-bit random number from stream j (out of 3), from 0 to dataInterval - 1
       TypeData indexData = distribution(randomStream[j]); 
-      myMappers[j].loadP1(indexData); //just set p1 to i
+      myMappers[j]->loadP1(indexData); //just set p1 to i
       for (ik=0; ik<k; ik++)
         _dataForActiveSubcarriers[ik] = distribution(randomStream[j]) % M;
-      myMappers[j].loadP2(_dataForActiveSubcarriers); //load p2 data array with our random values
+      myMappers[j]->loadP2(_dataForActiveSubcarriers); //load p2 data array with our random values
 
-      temporizador.start(); 
-      myMappers[j].mapP1(); //ixs + mlut + symbol creation      
+      //temporizador.start(); 
+      clock_gettime(CLOCK_MONOTONIC, &start); 
+
+      myMappers[j]->mapP1(); //ixs + mlut + symbol creation      
       //myMappers[j].map(); //ixs + mlut + symbol creation      
-      temporizador.stop(); 
-      cout << printTime(temporizador) << "\n";
+      //temporizador.stop(); 
+      //cout << printTime(temporizador) << "\n";
+    clock_gettime(CLOCK_MONOTONIC, &end); 
+  
+    // Calculating total time taken by the program. 
+    double time_taken; 
+    time_taken = (end.tv_sec - start.tv_sec) * 1e9; 
+    time_taken = (time_taken + (end.tv_nsec - start.tv_nsec)) * 1e-9; //from nano to microsec
+  
+    cout << "Time taken by program is : " << fixed 
+         << time_taken << setprecision(9); 
+    cout << " sec" << endl; 
     }
    }
 

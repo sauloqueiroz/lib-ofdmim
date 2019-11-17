@@ -105,6 +105,10 @@ TypeData UnRankingAlgorithmsCallBack::optimalRanking(int N, int k, TypeIndex* in
 
 TypeData UnRankingAlgorithmsCallBack::binomialCoefficient(unsigned int n, unsigned int k)
 {  
+  //the product in this multiplicative formula of C(N,k) produces very large numbers
+  //the largest one that fits a 64-bit variable is C(66,33)
+  assert(n <= 66);
+
   assert(n >= 0 && k >= 0);
   if (k > n) return 0;
   if (k == n) return 1;

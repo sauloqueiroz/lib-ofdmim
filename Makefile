@@ -17,7 +17,7 @@
  #
 IDIR =./include
 LIBDIR =./lib 
-CC=clang++-6.0
+CC=g++
 CFLAGS=-I$(IDIR) -L$(LIBDIR) -O2
 
 

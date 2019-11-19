@@ -16,7 +16,7 @@ echo "ATTENTION: This scripts works only for BPSK and even numbers N<=68"
 #-- ieeeaccess produces 20000 runtime samples. I verified this is enough
 #   to enable the convergence of akaroa-2 with 95% conf. and rel. error < 5%
 
-LARGESTN=66
+LARGESTN=62
 for ALGORITHM in {1..2..1} 
 do
 #    for i in {2..$LARGESTN..2} 

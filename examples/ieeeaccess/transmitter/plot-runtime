@@ -3,7 +3,7 @@ set terminal postscript eps enhanced color font 'Helvetica,15.5'
 set font 'Helvetica,15.5'
 
 #set xtics 0,2,36
-set xtics 0,4,68   
+set xtics 0,4,62  
 
 set xtics font "Helvetica,15.5" 
 set ytics font "Helvetica,15.5" 

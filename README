@@ -72,8 +72,8 @@ main()
     // declaration of unrank and rank callback (pointer) variables 
     void (UnRankingAlgorithmsCallBack::*unrank)(TypeData, int, int, TypeIndex*);
     TypeData (UnRankingAlgorithmsCallBack::*rank) (int N, int k, TypeIndex* indexesArray);
-    unrank = &UnRankingAlgorithmsCallBack::thirdPartUnranking;
     // assigning callback variables with a method of UnRankingAlgorithmsCallBack
+    unrank = &UnRankingAlgorithmsCallBack::thirdPartUnranking;
     rank = &UnRankingAlgorithmsCallBack::thirdPartRanking;
     //setting the third-part IxS unranking/ranking algorithms to your own implementation
     myMapper.setIxSAlgorithm(unrank, rank);

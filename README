@@ -84,7 +84,7 @@ main()
 6. SUGGESTED TODO FROM THE INITIAL VERSION
 -----------------------------------------
 * Improve documentation and makefile
-* The p1 bits are implemented as 64-bit variables. In the optimal setup (k=N/2), this gives symbols of at most N = 66 subcarriers. This is because the product in the multiplicative formula of C(N,k) produces very large numbers that require more than 64 bits if N>66 and the optimal setup is chosen (k=N/2). Future improvements may refer to techniques that avoid overflow of the multiplicative formula for N>66 e.g. Keprt, Aleš. (2006). Simple and Fast Computation of Binomial Coefficients. 
+* The p1 bits are implemented as 64-bit variables. In the optimal setup (k=N/2), this gives symbols of at most N = 64 subcarriers. This is because the product in the multiplicative formula of C(N,k) produces very large numbers that require more than 64 bits if N>64 and the optimal setup is chosen (k=N/2). Future improvements may refer to techniques that avoid overflow of the multiplicative formula for N>64 eg. adoption of BigInt C++ library.
 * Expand to higher order QAM constellations M>4.
 * Support for sub-optimal spectral efficiency setups, g>1, k!=N/2.
 * Support dual-mode OFDM-IM mapp (remark: this is just a matter of add novel constellation diagrams in the MLUT class)

@@ -16,14 +16,14 @@
  ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  **/
 
-#include "immapper.h" 
+#include <immapper.h> 
 //========================================================> OFDM IM CLASS
 //Default constructor:
-IMMapper::IMMapper(): g(1), N(66), k(32), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
+IMMapper::IMMapper(): g(1), N(LARGEST_SYMBOL), k(32), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
 {
   //the product in the multiplicative formula of C(N,k) produces very large numbers
-  //the largest one that fits a 64-bit variable is C(66,33)
-  assert(N <= 66);
+  //the largest one that fits a 64-bit variable is C(64,32)
+  assert(N <= LARGEST_SYMBOL);
   mlut = new MLUT(2);
   allocateOFDMIMSymbol(N);
   allocateKSizeArrays(k);
@@ -42,8 +42,8 @@ IMMapper::IMMapper(): g(1), N(66), k(32), ofdmIMSymbol(NULL), p2(NULL), arrayI(N
 IMMapper::IMMapper(int _N): g(1), p2(NULL), arrayI(NULL), arrayS(NULL)
 {
   //the product in the multiplicative formula of C(N,k) produces very large numbers
-  //the largest one that fits a 64-bit variable is C(66,33)
-  assert(N <= 66);
+  //the largest one that fits a 64-bit variable is C(64,32)
+  assert(N <= LARGEST_SYMBOL);
   N = _N;
   k = N / 2;
   p1 = 0;
@@ -64,8 +64,8 @@ IMMapper::IMMapper(int _N): g(1), p2(NULL), arrayI(NULL), arrayS(NULL)
 IMMapper::IMMapper(int _N, int _M): g(1), ofdmIMSymbol(NULL), p2(NULL), arrayI(NULL), arrayS(NULL)
 {
   //the product in the multiplicative formula of C(N,k) produces very large numbers
-  //the largest one that fits a 64-bit variable is C(66,33)
-  assert(N <= 66);
+  //the largest one that fits a 64-bit variable is C(64,32)
+  assert(N <= LARGEST_SYMBOL);
   N = _N;
   k = N / 2;
   p1 = 0;
@@ -380,36 +380,30 @@ void IMMapper::printArrayI()
 }
 
 
-TypeData IMMapper::binomialCoefficient(unsigned int n, unsigned int k)
+/*
+ * This is the best algorithm I know to compute binomial coefficients
+ * It is from the ancient book Lilavati, see below link for details
+ * REF: https://blog.plover.com/math/choose.html
+ * TODO: employ BigInt class to support arbitrarily large symbols
+ */
+TypeData IMMapper::binomialCoefficient(TypeData N, TypeData K)
 {  
-  assert(n >= 0 && k >= 0);
-  if (k > n) return 0;
-  if (k == n || k == 0) return 1;
+  //the product in this multiplicative formula of C(N,k) produces very large numbers
+  //the largest one that fits a 64-bit variable is C(64,33)
+  assert(N <= LARGEST_SYMBOL && N >= 0 && K >= 0);
 
-  /*
-   * C(n, k)  = C(n, n-k)
-   * Since this algorithm is O(k) we set k to min(k, n - k).
-   * The multiplicative slightly changes the combinatorial multiplicative 
-   * formula  (N-i+1) / i optimized code adapted from:
-   * https://www.developertyrone.com/blog/generating-the-mth-lexicographical-element-of-a-mathematical-combination/
-   */
-  TypeData i, ans, iMax, delta;
-   if (k < n-k) // ex: Choose(100,3)
-   {
-      delta = n - k;
-      iMax = k;
-   }
-   else         // ex: Choose(100,97)
-   {
-     delta = k;
-     iMax = n-k;
-   }
+  if (N < K)
+    return 0;  // special case
+  if (N == K || K == 0)
+    return 1;
 
-   ans = delta + 1;
-   for (i = 2; i <= iMax; ++i)
-    {
-       //checked { ans = (ans * (delta + i)) / i; }
-       ans = (ans * (delta + i)) / i; 
+  
+  long double r = 1.0, d, n = (long double) N, k = (long double) K;
+
+   for (d=1; d <= k; d++) 
+   {
+     r *= n--;
+     r /= d;
     }
-    return ans;
+    return (TypeData) r;
 }

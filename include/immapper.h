@@ -35,6 +35,9 @@ using namespace std;
         typedef unsigned long int TypeData;
         typedef unsigned int TypeIndex;
     #endif
+
+#define LARGEST_SYMBOL 64
+
 /* OFDMIM mapper
  * The constructor creates array I of indexes and s of
  */
@@ -91,6 +94,6 @@ class IMMapper
      void printSymbol();
      void printArrayS();
      void printArrayI();
-     TypeData binomialCoefficient(unsigned int n, unsigned int k);
+     TypeData binomialCoefficient(TypeData N, TypeData K);
 };
 #endif

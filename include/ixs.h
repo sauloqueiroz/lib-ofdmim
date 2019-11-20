@@ -31,6 +31,7 @@ using namespace std;
         typedef unsigned int TypeIndex;
     #endif
 
+#define LARGEST_N 64
 
 /*
  * Class that implements different combinatorial unranking/ranking
@@ -50,6 +51,6 @@ class UnRankingAlgorithmsCallBack
     TypeData optimalRanking(int N, int k, TypeIndex* indexesArray); 
     TypeData thirdPartRanking(int N, int k, TypeIndex* indexesArray); 
     TypeData pascalRanking(int N, int k, TypeIndex* indexesArray);  //not implemented yet
-    TypeData binomialCoefficient(unsigned int n, unsigned int k);
+    TypeData binomialCoefficient(TypeData N, TypeData K);
 };
 #endif

@@ -17,7 +17,7 @@
  **/
 
 
-#include "ixs.h"
+#include <ixs.h>
 
 void UnRankingAlgorithmsCallBack::combinadicUnranking(TypeData X, int N, int k, TypeIndex* answer) //unranking: from current p1 data to k-index
 {
@@ -99,43 +99,32 @@ TypeData UnRankingAlgorithmsCallBack::optimalRanking(int N, int k, TypeIndex* in
   return (TypeData) X;
 }
 
-
-TypeData UnRankingAlgorithmsCallBack::binomialCoefficient(unsigned int n, unsigned int k)
+/*
+ * This is the best algorithm I know to compute binomial coefficients
+ * It is from the ancient book Lilavati, see below link for details
+ * REF: https://blog.plover.com/math/choose.html
+ * TODO: employ BigInt class to support arbitrarily large symbols
+ */
+TypeData UnRankingAlgorithmsCallBack::binomialCoefficient(TypeData N, TypeData K)
 {  
   //the product in this multiplicative formula of C(N,k) produces very large numbers
   //the largest one that fits a 64-bit variable is C(66,33)
-  assert(n <= 66);
+  assert(N <= LARGEST_N && N >= 0 && K >= 0);
 
-  assert(n >= 0 && k >= 0);
-  if (k > n) return 0;
-  if (k == n) return 1;
-  if (k == 0) return 1;
-  /*
-   * C(n, k)  = C(n, n-k)
-   * Since this algorithm is O(k) we set k to min(k, n - k).
-   * The multiplicative slightly changes the combinatorial multiplicative 
-   * formula  (N-i+1) / i optimized code adapted from:
-   * https://www.developertyrone.com/blog/generating-the-mth-lexicographical-element-of-a-mathematical-combination/
-   */
-  TypeData i, ans, iMax, delta;
-   if (k < n-k) // ex: Choose(100,3)
-   {
-      delta = n - k;
-      iMax = k;
-   }
-   else         // ex: Choose(100,97)
-   {
-     delta = k;
-     iMax = n-k;
-   }
+  if (N < K)
+    return 0;  // special case
+  if (N == K || K == 0)
+    return 1;
 
-   ans = delta + 1;
-   for (i = 2; i <= iMax; ++i)
-    {
-       //checked { ans = (ans * (delta + i)) / i; }
-       ans = (ans * (delta + i)) / i; 
-    }
-    return ans;
+  
+  long double r = 1.0, d, n = (long double) N, k = (long double) K;
+
+   for (d=1; d <= k; d++) 
+   {
+     r *= n--;
+     r /= d;
+   }
+    return (TypeData) r;
 }
 
 //replace the content of this method to your own implementation of unranking (index selector at transmitter)

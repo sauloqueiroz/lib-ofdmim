@@ -1,3 +1,3 @@
 Param    Estimate       Delta  Conf         Var   Count   Trans
-    1   0.0527848  0.00169461  0.95 5.13317e-07    1818     303
+    1   0.0522327  0.00142339  0.95 3.62155e-07    1764     294
 #Results obtained using the Akaroa2(c) automatic parallel simulation manager.

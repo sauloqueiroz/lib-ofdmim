@@ -24,8 +24,8 @@ void UnRankingAlgorithmsCallBack::combinadicUnranking(TypeData X, int N, int k, 
   assert(answer);
   TypeData bc;
   TypeIndex cc = N; // cc is the next candidate for arrayI[i]
-  int i;
-  for (i=k-1; i>-1; i--)
+  long int i;
+  for (i=k-1; i>=0; i--)
   {
     do
     {
@@ -43,24 +43,20 @@ void UnRankingAlgorithmsCallBack::optimalUnranking(TypeData X, int N, int k, Typ
 {
   assert(indexesArray);
   TypeData cc = N - 1;
-  TypeData bc = binomialCoefficient2(cc, k);
-  double  bc2; 
+  TypeData bc = binomialCoefficient(cc, k);
   long int i;
   for (i=k-1; i>=0; i--)
   {
    while (bc > X)
     {
-      //bc2 = (double)(cc - (i + 1))*((double)bc/cc); //1st: from C(N, k) to C(N-1, k)
-      bc2 =  ((cc - (i + 1))*bc)/cc; //1st: from C(N, k) to C(N-1, k)
-      //printf("\t bc=%lf\n", bc2);
-      bc = (TypeData) bc2;
+      if (cc == 0) return;
+      bc =  ((cc - (i + 1))*bc)/cc; //1st: from C(N, k) to C(N-1, k)
       cc--; //update cc to correspond to current bc
     }
-    answer[i] = cc;
+    indexesArray[i] = cc;
     X = X - bc;
-    //bc2 = (double)(i + 1)*((double)bc/cc); //1st C(cc, k) to C(cc - 1, k - 1)
-    bc2 = (double)((i + 1)*(double)bc)/cc; //1st C(cc, k) to C(cc - 1, k - 1)
-    bc = (TypeData)bc2;
+    if (cc == 0) return;
+    bc = ((i+1)*bc)/cc; //1st C(cc, k) to C(cc - 1, k - 1)
     cc--;    
   }
 }
@@ -81,26 +77,24 @@ TypeData UnRankingAlgorithmsCallBack::optimalRanking(int N, int k, TypeIndex* in
 {
   assert(indexesArray);
   TypeIndex cc, i = 1;
-  double X = 0.0, ccbincoef = 0.0;
+  TypeData X = 0, ccbincoef = 0;
 
   while (i<=k && indexesArray[i-1]<i)
     i++;
   if (i>k) return 0;
-
-  //indexesArray is indexed from 0 to k-1.
-  ccbincoef = (double) binomialCoefficient(indexesArray[i-1], i);
+  ccbincoef = (TypeData) binomialCoefficient(indexesArray[i-1], i);
   cc = indexesArray[i-1];
   for (cc = indexesArray[i-1]; cc < N; cc++)
   {
     if ( i > k) return X;
     if (indexesArray[i-1] == cc)
     {
-      X = X + (unsigned long int)ccbincoef;
-      ccbincoef = ccbincoef * ((double)cc+1) / ((double)i+1);
+      X = X + ccbincoef;
+      ccbincoef = (ccbincoef *(cc+1)) / (i+1);
       i++;   
     }
    else
-     ccbincoef = ccbincoef * ((double)cc+1) / ((double)cc+1-i);
+     ccbincoef = (ccbincoef * (cc+1)) / (cc+1-i); 
   }
   return (TypeData) X;
 }

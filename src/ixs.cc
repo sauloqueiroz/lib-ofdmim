@@ -42,21 +42,24 @@ void UnRankingAlgorithmsCallBack::combinadicUnranking(TypeData X, int N, int k, 
 void UnRankingAlgorithmsCallBack::optimalUnranking(TypeData X, int N, int k, TypeIndex* indexesArray) 
 {
   assert(indexesArray);
-  TypeIndex cc = N - 1;
-  TypeData bc = (double) binomialCoefficient(cc, k);
+  TypeData cc = N - 1;
+  TypeData bc = binomialCoefficient2(cc, k);
   double  bc2; 
-  int i;
-  for (i=k-1; i>-1; i--)
+  long int i;
+  for (i=k-1; i>=0; i--)
   {
    while (bc > X)
     {
-      bc2 = (double)(cc - (i + 1))*((double)bc/cc); //1st: from C(N, k) to C(N-1, k)
+      //bc2 = (double)(cc - (i + 1))*((double)bc/cc); //1st: from C(N, k) to C(N-1, k)
+      bc2 =  ((cc - (i + 1))*bc)/cc; //1st: from C(N, k) to C(N-1, k)
+      //printf("\t bc=%lf\n", bc2);
       bc = (TypeData) bc2;
       cc--; //update cc to correspond to current bc
     }
-    indexesArray[i] = cc;
+    answer[i] = cc;
     X = X - bc;
-    bc2 = (double)(i + 1)*((double)bc/cc); //1st C(cc, k) to C(cc - 1, k - 1)
+    //bc2 = (double)(i + 1)*((double)bc/cc); //1st C(cc, k) to C(cc - 1, k - 1)
+    bc2 = (double)((i + 1)*(double)bc)/cc; //1st C(cc, k) to C(cc - 1, k - 1)
     bc = (TypeData)bc2;
     cc--;    
   }

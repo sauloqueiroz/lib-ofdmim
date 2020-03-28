@@ -1,6 +1,14 @@
 0. LICENSE AND DISCLAIMER
 ------------------------
 /**
+ ** PLEASE, if this library is useful to you somehow, we ask you to cite:
+ **
+ ** 1) Saulo Queiroz, João Vilela, and Edmundo Monteiro; ''Optimal Mapper for OFDM with Index Modulation: An Spectro
+       Computational Analysis,'', Arxiv eprint 2002.09382, (under review by IEEE Access), 2020.
+ **
+ ** 2) S. Queiroz, W. Silva, J. P. Vilela and E. Monteiro, "Maximal Spectral Efficiency of OFDM with Index Modulation
+       under Polynomial Space Complexity," in IEEE Wireless Communications Letters.
+ **
  ** Copyright (c) 2019 Saulo Jorge Beltrao de Queiroz
  ** Contact: Saulo Queiroz ssaulojorge at gmail dot com, sauloqueiroz at utfpr dot edu dot br saulo at dei uc pt
  ** This program is free software; you can redistribute it and/or modify
@@ -27,16 +35,21 @@ Our library implements all steps to map (decimal) data into frequency-domain com
 
 2.  AUTHORS
 ----------------
-This software was developed by Saulo Queiroz during this PhD under supervision of profs. Edmundo Monteiro and Joao P. Vilela.
+This software was developed by Saulo Queiroz during his PhD under supervision of profs. Edmundo Monteiro and Joao P. Vilela.
 If you find any bug, please, contact the author.
 
 3. FUNCTIONALITIES OF INITIAL VERSION
 -------------------------------------
 * Bit to/from frequeny-domain OFDM-IM complex baseband samples
+
 * Suported index selector (IxS) algorithms: 
+
    -> Combinadic unranking/ranking (referred to by the original OFDM-IM setup)
+
    -> Linear-time combinadic unranking/ranking 
+
 * Supported constellations for active subcarriers: 
+
    -> IEEE 802.11 BPSK and QPSK
 
 4. INSTALLATION
@@ -87,7 +100,7 @@ main()
 * The p1 bits are implemented as 64-bit variables. In the optimal setup (k=N/2), this gives symbols of at most N = 64 subcarriers. This is because the product in the multiplicative formula of C(N,k) produces very large numbers that require more than 64 bits if N>64 and the optimal setup is chosen (k=N/2). Future improvements may refer to techniques that avoid overflow of the multiplicative formula for N>64 eg. adoption of BigInt C++ library.
 * Expand to higher order QAM constellations M>4.
 * Support for sub-optimal spectral efficiency setups, g>1, k!=N/2.
-* Support dual-mode OFDM-IM mapp (remark: this is just a matter of add novel constellation diagrams in the MLUT class)
+* Support dual-mode OFDM-IM mapp (remark: this is just a matter of adding novel constellation diagrams in the MLUT class)
 * Support multiple-mode OFDM-IM map
 * Support for the remainder DSP steps: IFFT, Detection.
 * Support for noise and channel simulation to compare different OFDM-IM algorithms
